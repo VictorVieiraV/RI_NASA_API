@@ -1,5 +1,4 @@
 import scrapy
-from scrapy.http import Response
 
 class RiBot(scrapy.Spider):
     name = "RI BOT"
