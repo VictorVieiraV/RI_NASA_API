@@ -83,7 +83,7 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
                     csv_writer.writerow(neo_object.to_list())
 
             print(f"Dados salvos em {csv_filename}")
-
+            url = data['links']['previous']
         else:
             # Imprimindo uma mensagem de erro se a solicitação falhou
             print(f"Erro na solicitação. Código de status: {response.status_code}")
