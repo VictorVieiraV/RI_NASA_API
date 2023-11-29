@@ -28,7 +28,7 @@ class NearEarthObject:
         ]
 
 # URL da API da NASA
-url = "https://api.nasa.gov/neo/rest/v1/feed?start_date=2023-11-21&end_date=2023-11-28&api_key=NW3jIAVXdlEPrD3Rs6YEgJquN0ZELJtAF2erudSO"
+url = "https://api.nasa.gov/neo/rest/v1/feed?start_date=2023-11-22&end_date=2023-11-29&api_key=NW3jIAVXdlEPrD3Rs6YEgJquN0ZELJtAF2erudSO"
 
 # Obtendo a data atual no formato YYYY-MM-DD
 current_date = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
