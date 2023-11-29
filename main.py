@@ -1,6 +1,7 @@
 import requests
 import csv
-from datetime import datetime
+import re
+from datetime import datetime, timedelta
 
 class NearEarthObject:
     def __init__(self, id_object, name, diameter_min, diameter_max, approach_date, miss_distance, relative_velocity, is_potentially_hazardous):
@@ -36,7 +37,9 @@ current_date = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 csv_filename = f"C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_{current_date}.csv"
 
 # Número máximo de requisições
-num_requests = 2
+num_requests = 500
+
+cont = 0
 
 # Abrindo o arquivo CSV para escrita fora do loop
 with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
@@ -82,8 +85,40 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
                     # Escrevendo os dados do objeto no arquivo CSV
                     csv_writer.writerow(neo_object.to_list())
 
-            print(f"Dados salvos em {csv_filename}")
+            cont += 1
+            print(f"Dados salvos em {csv_filename} - {cont}")
+            
             url = data['links']['previous']
+            
+            
+            # Extracting start_date and end_date from the URL string using regular expressions
+            start_date_match = re.search(r'start_date=(\d{4}-\d{2}-\d{2})', url)
+            end_date_match = re.search(r'end_date=(\d{4}-\d{2}-\d{2})', url)
+
+            if start_date_match and end_date_match:
+                # Parsing the matched dates
+                start_date_str = start_date_match.group(1)
+                end_date_str = end_date_match.group(1)
+
+                # Converting the dates to datetime objects
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+                # Adjusting the dates by subtracting one day
+                start_date -= timedelta(days=1)
+                end_date -= timedelta(days=1)
+
+                # Formatting the adjusted dates back to strings
+                adjusted_start_date_str = start_date.strftime("%Y-%m-%d")
+                adjusted_end_date_str = end_date.strftime("%Y-%m-%d")
+
+                # Reconstructing the URL with adjusted dates
+                adjusted_url = re.sub(
+                    r'start_date=\d{4}-\d{2}-\d{2}',
+                    f'start_date={adjusted_start_date_str}',
+                    re.sub(r'end_date=\d{4}-\d{2}-\d{2}', f'end_date={adjusted_end_date_str}', url)
+                )
+            url = adjusted_url
         else:
             # Imprimindo uma mensagem de erro se a solicitação falhou
             print(f"Erro na solicitação. Código de status: {response.status_code}")
