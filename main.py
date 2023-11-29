@@ -36,7 +36,7 @@ current_date = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 csv_filename = f"C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_{current_date}.csv"
 
 # Número máximo de requisições
-num_requests = 1000
+num_requests = 2
 
 # Abrindo o arquivo CSV para escrita fora do loop
 with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
@@ -47,11 +47,11 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
     csv_writer.writerow([
         "ID do Objeto",
         "Nome do Objeto",
-        "Diâmetro Mínimo Estimado",
-        "Diâmetro Máximo Estimado",
+        "Diâmetro Mínimo Estimado em Km",
+        "Diâmetro Máximo Estimado em Km",
         "Data de Aproximação Mais Próxima",
-        "Distância Mínima Estimada de Aproximação",
-        "Velocidade Relativa à Terra",
+        "Distância Mínima Estimada de Aproximação em Km",
+        "Velocidade Relativa à Terra em Km/h",
         "Potencialmente Perigoso"
     ])
 
@@ -73,9 +73,9 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
                         name=neo_data['name'],
                         diameter_min=neo_data['estimated_diameter']['kilometers']['estimated_diameter_min'],
                         diameter_max=neo_data['estimated_diameter']['kilometers']['estimated_diameter_max'],
-                        approach_date=neo_data['close_approach_data'][0]['close_approach_date'],
+                        approach_date=neo_data['close_approach_data'][0]['close_approach_date_full'],
                         miss_distance=neo_data['close_approach_data'][0]['miss_distance']['kilometers'],
-                        relative_velocity=neo_data['close_approach_data'][0]['relative_velocity']['kilometers_per_second'],
+                        relative_velocity=neo_data['close_approach_data'][0]['relative_velocity']['kilometers_per_hour'],
                         is_potentially_hazardous=neo_data['is_potentially_hazardous_asteroid']
                     )
 
