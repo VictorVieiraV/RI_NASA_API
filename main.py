@@ -37,7 +37,7 @@ current_date = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 csv_filename = f"C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_{current_date}.csv"
 
 # Número máximo de requisições
-num_requests = 500
+num_requests = 50
 
 cont = 0
 
@@ -67,29 +67,11 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
         if response.status_code == 200:
             # Convertendo a resposta para JSON
             data = response.json()
-
-            # Iterando sobre objetos próximos à Terra e gravando no CSV
-            for date, neo_list in data['near_earth_objects'].items():
-                for neo_data in neo_list:
-                    neo_object = NearEarthObject(
-                        id_object=neo_data['neo_reference_id'],
-                        name=neo_data['name'],
-                        diameter_min=neo_data['estimated_diameter']['kilometers']['estimated_diameter_min'],
-                        diameter_max=neo_data['estimated_diameter']['kilometers']['estimated_diameter_max'],
-                        approach_date=neo_data['close_approach_data'][0]['close_approach_date_full'],
-                        miss_distance=neo_data['close_approach_data'][0]['miss_distance']['kilometers'],
-                        relative_velocity=neo_data['close_approach_data'][0]['relative_velocity']['kilometers_per_hour'],
-                        is_potentially_hazardous=neo_data['is_potentially_hazardous_asteroid']
-                    )
-
-                    # Escrevendo os dados do objeto no arquivo CSV
-                    csv_writer.writerow(neo_object.to_list())
-
+            
             cont += 1
             print(f"Dados salvos em {csv_filename} - {cont}")
             
             url = data['links']['previous']
-            
             
             # Extracting start_date and end_date from the URL string using regular expressions
             start_date_match = re.search(r'start_date=(\d{4}-\d{2}-\d{2})', url)
@@ -119,6 +101,56 @@ with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
                     re.sub(r'end_date=\d{4}-\d{2}-\d{2}', f'end_date={adjusted_end_date_str}', url)
                 )
             url = adjusted_url
+            # print(f"UrlAjustada: {adjusted_url}")
+
+            # Iterando sobre objetos próximos à Terra e gravando no CSV
+            for date, neo_list in data['near_earth_objects'].items():
+                for neo_data in neo_list:
+                    # print(f"IDOBJETO : {neo_data['neo_reference_id']} - URLSEMANA: {data['links']['self']}")
+                    
+                    # Define your default values based on the data type and requirements
+                    default_diameter_min = 0.0
+                    default_diameter_max = 0.0
+                    default_approach_date = "N/A"
+                    default_miss_distance = 0.0
+                    default_relative_velocity = 0.0
+                    default_is_potentially_hazardous = False
+
+                    # Check if the required keys exist in neo_data
+                    if 'estimated_diameter' in neo_data and 'kilometers' in neo_data['estimated_diameter']:
+                        diameter_min = neo_data['estimated_diameter']['kilometers'].get('estimated_diameter_min', default_diameter_min)
+                        diameter_max = neo_data['estimated_diameter']['kilometers'].get('estimated_diameter_max', default_diameter_max)
+                    else:
+                        diameter_min = default_diameter_min
+                        diameter_max = default_diameter_max
+
+                    # Similarly, check other keys in a similar manner
+                    if 'close_approach_data' in neo_data and neo_data['close_approach_data']:
+                        approach_date = neo_data['close_approach_data'][0].get('close_approach_date_full', default_approach_date)
+                        miss_distance = neo_data['close_approach_data'][0]['miss_distance'].get('kilometers', default_miss_distance)
+                        relative_velocity = neo_data['close_approach_data'][0]['relative_velocity'].get('kilometers_per_hour', default_relative_velocity)
+                    else:
+                        approach_date = default_approach_date
+                        miss_distance = default_miss_distance
+                        relative_velocity = default_relative_velocity
+
+                    is_potentially_hazardous = neo_data.get('is_potentially_hazardous_asteroid', default_is_potentially_hazardous)
+
+                    # Now, create the NearEarthObject instance
+                    neo_object = NearEarthObject(
+                        id_object=neo_data.get('neo_reference_id', "N/A"),
+                        name=neo_data.get('name', "N/A"),
+                        diameter_min=diameter_min,
+                        diameter_max=diameter_max,
+                        approach_date=approach_date,
+                        miss_distance=miss_distance,
+                        relative_velocity=relative_velocity,
+                        is_potentially_hazardous=is_potentially_hazardous
+                    )
+
+
+                    # Escrevendo os dados do objeto no arquivo CSV
+                    csv_writer.writerow(neo_object.to_list())
         else:
             # Imprimindo uma mensagem de erro se a solicitação falhou
             print(f"Erro na solicitação. Código de status: {response.status_code}")
