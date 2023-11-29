@@ -1,5 +1,6 @@
 import requests
 import csv
+from datetime import datetime
 
 class NearEarthObject:
     def __init__(self, id_object, name, diameter_min, diameter_max, approach_date, miss_distance, relative_velocity, is_potentially_hazardous):
@@ -28,11 +29,14 @@ class NearEarthObject:
 # URL da API da NASA
 url = "https://api.nasa.gov/neo/rest/v1/feed?start_date=2023-11-21&end_date=2023-11-28&api_key=NW3jIAVXdlEPrD3Rs6YEgJquN0ZELJtAF2erudSO"
 
+# Obtendo a data atual no formato YYYY-MM-DD
+current_date = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+
 # Nome do arquivo CSV
-csv_filename = "C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects.csv"
+csv_filename = f"C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_{current_date}.csv"
 
 # Número máximo de requisições
-num_requests = 10
+num_requests = 1000
 
 # Abrindo o arquivo CSV para escrita fora do loop
 with open(csv_filename, mode='w', newline='', encoding='utf-8') as csv_file:
