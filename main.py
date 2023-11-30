@@ -37,7 +37,7 @@ current_date = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 csv_filename = f"C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_{current_date}.csv"
 
 # Número máximo de requisições representa quantas semanas anteriores vamos buscar
-num_requests = 50
+num_requests = 522
 
 cont = 0
 

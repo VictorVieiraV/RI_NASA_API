@@ -20,10 +20,10 @@ def on_button_click():
 
     # Atualizar o Text Widget com os resultados
     text_resultados.delete(1.0, tk.END)  # Limpar o Text Widget
-    text_resultados.insert(tk.END, resultados.head().to_string(index=False))
+    text_resultados.insert(tk.END, resultados.to_string(index=False))
 
 # Caminho do arquivo CSV
-file_path = "C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_28_11_2023_22_43_54.csv"
+file_path = "C:/Users/PC/Desktop/Dados_near_earth_objects/near_earth_objects_29_11_2023_22_03_30.csv"
 
 # Ler o arquivo CSV para um DataFrame
 df = pd.read_csv(file_path)
