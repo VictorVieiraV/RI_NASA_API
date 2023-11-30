@@ -6,9 +6,17 @@ def on_button_click():
     # Obter os valores dos Entry
     coluna_selecionada = combo_colunas.get()
     valor_filtro = entry_valor_filtro.get()
+    operador = combo_operadores.get()
 
-    # Filtrar os dados com base na coluna e valor fornecidos
-    resultados = df[df[coluna_selecionada].astype(str).str.contains(valor_filtro, case=False, na=False)]
+    # Aplicar o filtro com base na coluna, valor e operador fornecidos
+    if operador == "Igual a":
+        resultados = df[df[coluna_selecionada].astype(str).str.lower() == valor_filtro.lower()]
+    elif operador == "Maior que":
+        resultados = df[df[coluna_selecionada] > float(valor_filtro)]
+    elif operador == "Menor que":
+        resultados = df[df[coluna_selecionada] < float(valor_filtro)]
+    else:
+        resultados = df
 
     # Atualizar o Text Widget com os resultados
     text_resultados.delete(1.0, tk.END)  # Limpar o Text Widget
@@ -30,7 +38,7 @@ root.columnconfigure(1, weight=1)
 root.rowconfigure(4, weight=1)
 
 # Criar e organizar os widgets na janela
-label_instrucao = tk.Label(root, text="Escolha uma coluna e digite um valor para filtrar:")
+label_instrucao = tk.Label(root, text="Escolha uma coluna, um operador e digite um valor para filtrar:")
 label_coluna = tk.Label(root, text="Coluna:")
 options_colunas = [
     "ID do Objeto",
@@ -43,18 +51,29 @@ options_colunas = [
     "Potencialmente Perigoso"
 ]
 combo_colunas = ttk.Combobox(root, values=options_colunas)
+label_operador = tk.Label(root, text="Operador:")
+options_operadores = ["Igual a", "Maior que", "Menor que"]
+combo_operadores = ttk.Combobox(root, values=options_operadores)
 label_valor_filtro = tk.Label(root, text="Valor:")
 entry_valor_filtro = ttk.Entry(root)
 button_buscar = tk.Button(root, text="Buscar", command=on_button_click)
 text_resultados = tk.Text(root, height=20, width=120)
 
 label_instrucao.grid(row=0, column=0, columnspan=2, pady=10)
-label_coluna.grid(row=1, column=0, padx=10, pady=10, sticky=tk.E)
-combo_colunas.grid(row=1, column=1, padx=5, pady=5)
-label_valor_filtro.grid(row=2, column=0, padx=5, pady=5, sticky=tk.E)
-entry_valor_filtro.grid(row=2, column=1, padx=5, pady=5)
-button_buscar.grid(row=3, column=0, columnspan=2, pady=10)
-text_resultados.grid(row=4, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
+label_coluna.grid(row=1, column=0, padx=10, pady=10)
+combo_colunas.grid(row=1, column=1, padx=10, pady=10)
+
+label_operador.grid(row=2, column=0, padx=10, pady=10)
+combo_operadores.grid(row=2, column=1, padx=10, pady=10)
+
+label_valor_filtro.grid(row=3, column=0, padx=10, pady=10)
+entry_valor_filtro.grid(row=3, column=1, padx=10, pady=10)
+
+button_buscar.grid(row=4, column=0, columnspan=2, pady=10)
+text_resultados.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
+
+# Configurar o redimensionamento responsivo
+root.columnconfigure(0, weight=1)
 
 # Iniciar o loop de eventos da GUI
 root.mainloop()
